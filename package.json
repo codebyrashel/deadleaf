@@ -2,7 +2,6 @@
   "name": "deadleaf",
   "version": "0.1.0",
   "type": "module",
-  "private": true,
   "description": "Find deadleaf files, exports, and dependencies in a TypeScript/JavaScript project with a confidence score and reason for every result.",
   "main": "index.js",
   "bin": {
