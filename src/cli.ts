@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import chalk from "chalk";
+import { Project } from "ts-morph";
+import { findUnusedFiles } from "./analyzers/unused-files.js";
 
 const program = new Command();
 
@@ -12,10 +14,25 @@ program
 program
   .command("scan")
   .description("Scan a project for unused code")
-  .argument("[path]", "path to the project to scan", ".")
-  .action((path: string) => {
-    console.log(chalk.cyan(`Scanning: ${path}`));
-    console.log(chalk.yellow("Analyzer not wired up yet — coming next."));
+  .argument("[path]", "path to the project's tsconfig.json", "./tsconfig.json")
+  .action((tsconfigPath: string) => {
+    console.log(chalk.cyan(`Scanning using: ${tsconfigPath}`));
+
+    const project = new Project({
+      tsConfigFilePath: tsconfigPath,
+    });
+
+    const unusedFiles = findUnusedFiles(project);
+
+    if (unusedFiles.length === 0) {
+      console.log(chalk.green("No unused files found."));
+      return;
+    }
+
+    console.log(chalk.yellow(`\nFound ${unusedFiles.length} possibly unused file(s):\n`));
+    for (const result of unusedFiles) {
+      console.log(`  ${chalk.red(result.confidence + "%")}  ${result.filePath}`);
+    }
   });
 
 program.parse();
