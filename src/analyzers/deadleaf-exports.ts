@@ -1,6 +1,6 @@
 import { Project, Node } from "ts-morph";
 
-export interface UnusedExportResult {
+export interface DeadleafExportResult {
   filePath: string;
   exportName: string;
   confidence: number;
@@ -8,8 +8,8 @@ export interface UnusedExportResult {
 
 const BARREL_FILES = ["index.ts"];
 
-export function findUnusedExports(project: Project): UnusedExportResult[] {
-  const results: UnusedExportResult[] = [];
+export function findDeadleafExports(project: Project): DeadleafExportResult[] {
+  const results: DeadleafExportResult[] = [];
 
   for (const file of project.getSourceFiles()) {
     if (file.isDeclarationFile()) continue;

@@ -1,19 +1,36 @@
 {
-  "name": "unused",
+  "name": "deadleaf",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "",
+  "description": "Find deadleaf files, exports, and dependencies in a TypeScript/JavaScript project with a confidence score and reason for every result.",
   "main": "index.js",
   "bin": {
-    "unused": "./dist/cli.mjs"
+    "deadleaf": "./dist/cli.mjs"
   },
   "scripts": {
     "build": "tsdown src/cli.ts --format esm",
     "start": "node dist/cli.mjs"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cli",
+    "typescript",
+    "unused-code",
+    "dead-code",
+    "unused-exports",
+    "unused-dependencies",
+    "static-analysis",
+    "ts-morph"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codebyrashel/deadleaf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/codebyrashel/deadleaf/issues"
+  },
+  "homepage": "https://github.com/codebyrashel/deadleaf#readme",
+  "author": "Rashel H. (https://github.com/codebyrashel)",
   "license": "ISC",
   "dependencies": {
     "chalk": "^6.0.0",

@@ -1,20 +1,20 @@
-# unused
+# deadleaf
 
-A CLI that finds unused files, exports, and dependencies in a TypeScript/JavaScript project - with a confidence score and a reason for every result, instead of a flat yes/no.
+A CLI that finds deadleaf files, exports, and dependencies in a TypeScript/JavaScript project - with a confidence score and a reason for every result, instead of a flat yes/no.
 
 > **Status:** early v1. Core detection works; not yet published to npm.
 
 ## Why confidence scores?
 
-Most dead-code tools give you a binary "unused" flag. In practice that's often wrong - a barrel file's exports are meant to be used externally, a `devDependency` might be invoked through an npm script instead of an `import`. `unused` tries to be honest about how sure it actually is, and tells you *why*, so you're not blindly deleting things a tool was overconfident about.
+Most dead-code tools give you a binary "deadleaf" flag. In practice that's often wrong - a barrel file's exports are meant to be used externally, a `devDependency` might be invoked through an npm script instead of an `import`. `deadleaf` tries to be honest about how sure it actually is, and tells you *why*, so you're not blindly deleting things a tool was overconfident about.
 
 ## Installation
 
 This isn't published to npm yet - run it from source:
 
 ```bash
-git clone https://github.com/codebyrashel/unused.git
-cd unused
+git clone https://github.com/codebyrashel/deadleaf.git
+cd deadleaf
 npm install
 npm run build
 npm link
@@ -23,7 +23,7 @@ npm link
 ## Usage
 
 ```bash
-unused scan [path-to-tsconfig]
+deadleaf scan [path-to-tsconfig]
 ```
 
 - `path-to-tsconfig` - optional, defaults to `./tsconfig.json`
@@ -33,26 +33,26 @@ unused scan [path-to-tsconfig]
 
 ```bash
 # Scan the current project
-unused scan
+deadleaf scan
 
 # Scan a project in another directory
-unused scan ../my-other-project/tsconfig.json
+deadleaf scan ../my-other-project/tsconfig.json
 
 # Get JSON output
-unused scan --json
+deadleaf scan --json
 ```
 
 
 ## Example output
 
 ```
-$ unused scan
+$ deadleaf scan
 
 Scanning using: ./tsconfig.json
 
 Summary: 2 possible issue(s) — 0 file(s), 0 export(s), 2 dependency(s)
 
-Unused dependencies (2):
+deadleaf dependencies (2):
   15%  tsdown  (devDependency)
        Invoked in npm script "build" — likely a build/CLI tool, not meant to be imported.
   50%  typescript  (devDependency)

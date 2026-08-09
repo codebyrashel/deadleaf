@@ -1,17 +1,17 @@
 import { Project } from "ts-morph";
 import { readFileSync } from "node:fs";
 
-export interface UnusedDependencyResult {
+export interface DeadleafDependencyResult {
   packageName: string;
   type: "dependency" | "devDependency";
   confidence: number;
   reason: string;
 }
 
-export function findUnusedDependencies(
+export function findDeadleafDependencies(
   project: Project,
   packageJsonPath: string
-): UnusedDependencyResult[] {
+): DeadleafDependencyResult[] {
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 
   const dependencies: Record<string, string> = packageJson.dependencies ?? {};
@@ -19,7 +19,7 @@ export function findUnusedDependencies(
   const scripts: Record<string, string> = packageJson.scripts ?? {};
 
   const usedPackages = collectImportedPackages(project);
-  const results: UnusedDependencyResult[] = [];
+  const results: DeadleafDependencyResult[] = [];
 
   for (const name of Object.keys(dependencies)) {
     if (name.startsWith("@types/")) continue;
@@ -42,7 +42,7 @@ function classify(
   packageName: string,
   type: "dependency" | "devDependency",
   scripts: Record<string, string>
-): UnusedDependencyResult {
+): DeadleafDependencyResult {
   const scriptMatch = findScriptUsage(packageName, scripts);
 
   if (scriptMatch) {
