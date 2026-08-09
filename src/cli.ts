@@ -2,8 +2,10 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { Project } from "ts-morph";
+import { dirname, join } from "node:path";
 import { findUnusedFiles } from "./analyzers/unused-files.js";
 import { findUnusedExports } from "./analyzers/unused-exports.js";
+import { findUnusedDependencies } from "./analyzers/unused-dependencies.js";
 
 const program = new Command();
 
@@ -24,7 +26,6 @@ program
     });
 
     const unusedFiles = findUnusedFiles(project);
-
     if (unusedFiles.length === 0) {
       console.log(chalk.green("No unused files found."));
     } else {
@@ -35,7 +36,6 @@ program
     }
 
     const unusedExports = findUnusedExports(project);
-
     if (unusedExports.length === 0) {
       console.log(chalk.green("No unused exports found."));
     } else {
@@ -44,6 +44,18 @@ program
         console.log(`  ${chalk.red(result.confidence + "%")}  ${result.exportName}  ${chalk.dim(result.filePath)}`);
       }
     }
+
+    const packageJsonPath = join(dirname(tsconfigPath), "package.json");
+        const unusedDeps = findUnusedDependencies(project, packageJsonPath);
+        if (unusedDeps.length === 0) {
+          console.log(chalk.green("No unused dependencies found."));
+        } else {
+          console.log(chalk.yellow(`\nFound ${unusedDeps.length} possibly unused dependency(s):\n`));
+          for (const result of unusedDeps) {
+            console.log(`  ${chalk.red(result.confidence + "%")}  ${result.packageName}  ${chalk.dim("(" + result.type + ")")}`);
+            console.log(`       ${chalk.dim(result.reason)}`);
+          }
+        }
   });
 
 program.parse();
