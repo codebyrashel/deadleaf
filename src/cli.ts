@@ -11,7 +11,7 @@ const program = new Command();
 
 program
   .name("unused")
-  .description("Find unused files, exports, and dependencies in a TypeScript/JavaScript project — with confidence scores.")
+  .description("Find unused files, exports, and dependencies in a TypeScript/JavaScript project - with confidence scores.")
   .version("0.1.0");
 
 program
@@ -37,6 +37,13 @@ program
     printTextReport(tsconfigPath, unusedFiles, unusedExports, unusedDependencies);
   });
 
+function confidenceLabel(confidence: number): string {
+  const text = `${confidence}%`;
+  if (confidence >= 80) return chalk.red(text);
+  if (confidence >= 50) return chalk.yellow(text);
+  return chalk.dim(text);
+}
+
 function printTextReport(
   tsconfigPath: string,
   unusedFiles: ReturnType<typeof findUnusedFiles>,
@@ -45,32 +52,43 @@ function printTextReport(
 ): void {
   console.log(chalk.cyan(`Scanning using: ${tsconfigPath}`));
 
-  if (unusedFiles.length === 0) {
-    console.log(chalk.green("No unused files found."));
-  } else {
-    console.log(chalk.yellow(`\nFound ${unusedFiles.length} possibly unused file(s):\n`));
+  const totalIssues = unusedFiles.length + unusedExports.length + unusedDependencies.length;
+
+  if (totalIssues === 0) {
+    console.log(chalk.green("\n✓ Nothing found - project looks clean.\n"));
+    return;
+  }
+
+  console.log(
+    chalk.bold(
+      `\nSummary: ${totalIssues} possible issue(s) - ` +
+        `${unusedFiles.length} file(s), ${unusedExports.length} export(s), ${unusedDependencies.length} dependency(s)\n`
+    )
+  );
+
+  if (unusedFiles.length > 0) {
+    console.log(chalk.yellow(`Unused files (${unusedFiles.length}):`));
     for (const result of unusedFiles) {
-      console.log(`  ${chalk.red(result.confidence + "%")}  ${result.filePath}`);
+      console.log(`  ${confidenceLabel(result.confidence)}  ${result.filePath}`);
     }
+    console.log();
   }
 
-  if (unusedExports.length === 0) {
-    console.log(chalk.green("No unused exports found."));
-  } else {
-    console.log(chalk.yellow(`\nFound ${unusedExports.length} possibly unused export(s):\n`));
+  if (unusedExports.length > 0) {
+    console.log(chalk.yellow(`Unused exports (${unusedExports.length}):`));
     for (const result of unusedExports) {
-      console.log(`  ${chalk.red(result.confidence + "%")}  ${result.exportName}  ${chalk.dim(result.filePath)}`);
+      console.log(`  ${confidenceLabel(result.confidence)}  ${result.exportName}  ${chalk.dim(result.filePath)}`);
     }
+    console.log();
   }
 
-  if (unusedDependencies.length === 0) {
-    console.log(chalk.green("No unused dependencies found."));
-  } else {
-    console.log(chalk.yellow(`\nFound ${unusedDependencies.length} possibly unused dependency(s):\n`));
+  if (unusedDependencies.length > 0) {
+    console.log(chalk.yellow(`Unused dependencies (${unusedDependencies.length}):`));
     for (const result of unusedDependencies) {
-      console.log(`  ${chalk.red(result.confidence + "%")}  ${result.packageName}  ${chalk.dim("(" + result.type + ")")}`);
+      console.log(`  ${confidenceLabel(result.confidence)}  ${result.packageName}  ${chalk.dim("(" + result.type + ")")}`);
       console.log(`       ${chalk.dim(result.reason)}`);
     }
+    console.log();
   }
 }
 
