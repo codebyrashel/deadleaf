@@ -1,3 +1,4 @@
+import { getRelevantSourceFiles, isTestFile } from "./shared.ts";
 import { Project, Node } from "ts-morph";
 
 export interface DeadleafExportResult {
@@ -11,8 +12,10 @@ const BARREL_FILES = ["index.ts"];
 export function findDeadleafExports(project: Project): DeadleafExportResult[] {
   const results: DeadleafExportResult[] = [];
 
-  for (const file of project.getSourceFiles()) {
+  for (const file of getRelevantSourceFiles(project)) {
     if (file.isDeclarationFile()) continue;
+
+    if (isTestFile(file.getFilePath())) continue;
 
     const isBarrel = BARREL_FILES.includes(file.getBaseName());
     const exportedDeclarations = file.getExportedDeclarations();

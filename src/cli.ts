@@ -2,10 +2,10 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { Project } from "ts-morph";
-import { dirname, join } from "node:path";
-import { findDeadleafFiles } from "./analyzers/deadleaf-files.js";
-import { findDeadleafExports } from "./analyzers/deadleaf-exports.js";
-import { findDeadleafDependencies } from "./analyzers/deadleaf-dependencies.js";
+import { dirname, join, relative } from "node:path";
+import { findDeadleafFiles } from "./analyzers/deadleaf-files.ts";
+import { findDeadleafExports } from "./analyzers/deadleaf-exports.ts";
+import { findDeadleafDependencies } from "./analyzers/deadleaf-dependencies.ts";
 
 const program = new Command();
 
@@ -41,6 +41,10 @@ function confidenceLabel(confidence: number): string {
   return chalk.dim(text);
 }
 
+function toRelative(filePath: string): string {
+  return relative(process.cwd(), filePath);
+}
+
 function printTextReport(
   tsconfigPath: string,
   deadleafFiles: ReturnType<typeof findDeadleafFiles>,
@@ -62,14 +66,14 @@ function printTextReport(
   if (deadleafFiles.length > 0) {
     console.log(chalk.yellow(`Unused files (${deadleafFiles.length}):`));
     for (const result of deadleafFiles) {
-      console.log(`  ${confidenceLabel(result.confidence)}  ${result.filePath}`);
+      console.log(`  ${confidenceLabel(result.confidence)}  ${toRelative(result.filePath)}`);
     }
     console.log();
   }
   if (deadleafExports.length > 0) {
     console.log(chalk.yellow(`Unused exports (${deadleafExports.length}):`));
     for (const result of deadleafExports) {
-      console.log(`  ${confidenceLabel(result.confidence)}  ${result.exportName}  ${chalk.dim(result.filePath)}`);
+      console.log(`  ${confidenceLabel(result.confidence)}  ${result.exportName}  ${chalk.dim(toRelative(result.filePath))}`);
     }
     console.log();
   }

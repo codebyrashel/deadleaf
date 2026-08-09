@@ -87,6 +87,9 @@ function findScriptUsage(
 function collectImportedPackages(project: Project): Set<string> {
   const packages = new Set<string>();
 
+  // Deliberately unfiltered: a package used only inside generated/build code
+  // (e.g. a Prisma client) is still genuinely "used" - ignoring those files
+  // here would cause false unused-dependency flags.
   for (const file of project.getSourceFiles()) {
     for (const importDecl of file.getImportDeclarations()) {
       addIfPackage(importDecl.getModuleSpecifierValue(), packages);

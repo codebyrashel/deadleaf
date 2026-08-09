@@ -27,3 +27,27 @@ test("does not flag entry point files", () => {
 
   assert.equal(results.length, 0);
 });
+
+
+test("does not flag files inside ignored directories like .next", () => {
+  const project = new Project({ useInMemoryFileSystem: true });
+
+  project.createSourceFile("src/index.ts", `export const x = 1;`);
+  project.createSourceFile("src/.next/generated.ts", `export const y = 2;`);
+
+  const results = findDeadleafFiles(project);
+
+  assert.equal(results.length, 0);
+});
+
+
+test("does not flag test files as unused", () => {
+  const project = new Project({ useInMemoryFileSystem: true });
+
+  project.createSourceFile("src/index.ts", `export const x = 1;`);
+  project.createSourceFile("src/thing.test.ts", `export const y = 2;`);
+
+  const results = findDeadleafFiles(project);
+
+  assert.equal(results.length, 0);
+});

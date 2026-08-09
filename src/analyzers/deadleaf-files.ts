@@ -1,3 +1,4 @@
+import { getRelevantSourceFiles, isTestFile } from "./shared.ts";
 import { Project, SourceFile } from "ts-morph";
 
 export interface DeadleafFileResult {
@@ -8,13 +9,17 @@ export interface DeadleafFileResult {
 const DEFAULT_ENTRY_PATTERNS = ["index.ts", "cli.ts", "main.ts"];
 
 export function findDeadleafFiles(project: Project): DeadleafFileResult[] {
-  const sourceFiles = project.getSourceFiles();
+  const sourceFiles = getRelevantSourceFiles(project);
   const results: DeadleafFileResult[] = [];
 
   for (const file of sourceFiles) {
     const fileName = file.getBaseName();
 
     if (DEFAULT_ENTRY_PATTERNS.includes(fileName)) {
+      continue;
+    }
+
+    if (isTestFile(file.getFilePath())) {
       continue;
     }
 
