@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "tsdown src/cli.ts --format esm",
-    "start": "node dist/cli.mjs"
+    "start": "node dist/cli.mjs",
+    "test": "node --test src/**/*.test.ts"
   },
   "keywords": [
     "cli",
