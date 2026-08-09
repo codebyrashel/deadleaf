@@ -3,6 +3,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import { Project } from "ts-morph";
 import { dirname, join, relative } from "node:path";
+import { existsSync } from "node:fs";
 import { findDeadleafFiles } from "./analyzers/deadleaf-files.ts";
 import { findDeadleafExports } from "./analyzers/deadleaf-exports.ts";
 import { findDeadleafDependencies } from "./analyzers/deadleaf-dependencies.ts";
@@ -20,6 +21,14 @@ program
   .argument("[path]", "path to the project's tsconfig.json", "./tsconfig.json")
   .option("--json", "output results as JSON instead of formatted text")
   .action((tsconfigPath: string, options: { json?: boolean }) => {
+
+    if (!existsSync(tsconfigPath)) {
+      console.error(chalk.red(`Error: Could not find a tsconfig.json at "${tsconfigPath}"`));
+      console.error(chalk.dim(`Make sure the path is correct, or run deadleaf from inside your project's root directory.`));
+      process.exitCode = 1;
+      return;
+    }
+    
     const project = new Project({
       tsConfigFilePath: tsconfigPath,
     });
