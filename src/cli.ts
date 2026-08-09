@@ -3,6 +3,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import { Project } from "ts-morph";
 import { findUnusedFiles } from "./analyzers/unused-files.js";
+import { findUnusedExports } from "./analyzers/unused-exports.js";
 
 const program = new Command();
 
@@ -26,12 +27,22 @@ program
 
     if (unusedFiles.length === 0) {
       console.log(chalk.green("No unused files found."));
-      return;
+    } else {
+      console.log(chalk.yellow(`\nFound ${unusedFiles.length} possibly unused file(s):\n`));
+      for (const result of unusedFiles) {
+        console.log(`  ${chalk.red(result.confidence + "%")}  ${result.filePath}`);
+      }
     }
 
-    console.log(chalk.yellow(`\nFound ${unusedFiles.length} possibly unused file(s):\n`));
-    for (const result of unusedFiles) {
-      console.log(`  ${chalk.red(result.confidence + "%")}  ${result.filePath}`);
+    const unusedExports = findUnusedExports(project);
+
+    if (unusedExports.length === 0) {
+      console.log(chalk.green("No unused exports found."));
+    } else {
+      console.log(chalk.yellow(`\nFound ${unusedExports.length} possibly unused export(s):\n`));
+      for (const result of unusedExports) {
+        console.log(`  ${chalk.red(result.confidence + "%")}  ${result.exportName}  ${chalk.dim(result.filePath)}`);
+      }
     }
   });
 
