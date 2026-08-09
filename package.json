@@ -5,6 +5,9 @@
   "private": true,
   "description": "",
   "main": "index.js",
+  "bin": {
+    "unused": "./dist/cli.mjs"
+  },
   "scripts": {
     "build": "tsdown src/cli.ts --format esm",
     "start": "node dist/cli.mjs"
